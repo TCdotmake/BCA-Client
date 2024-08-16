@@ -1,6 +1,7 @@
 import {  Link, Outlet, Route, Routes } from 'react-router-dom'
 import './App.css'
 import Login from './Login'
+import Signup from './Signup'
 export default function App() {
 
   return (
@@ -40,23 +41,23 @@ function Home(){
   )
 }
 
-function Signup(){
-  return(
-      <>
-          <form>
-          <label>User Name</label>
-          <input type="text"></input>
-              <label>Email</label>
-              <input type="email"></input>
-              <label>Password</label>
-              <input type='password'></input>
-              <label>Confirm Password</label>
-              <input type='password'></input>
-              <button type='submit'>Sign Up</button>
-          </form>
-      </>
-  )
-}
+// function Signup(){
+//   return(
+//       <>
+//           <form>
+//           <label htmlFor='signupName'>User Name</label>
+//           <input type="text" id='signupName'></input>
+//               <label >Email</label>
+//               <input type="email"></input>
+//               <label>Password</label>
+//               <input type='password'></input>
+//               <label>Confirm Password</label>
+//               <input type='password'></input>
+//               <button type='submit'>Sign Up</button>
+//           </form>
+//       </>
+//   )
+// }
 
 
 function NoMatch(){

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import validator from 'validator'
 
 const PASSMINLEN = 7;
@@ -7,7 +7,6 @@ const PASSMINLEN = 7;
 export default function Login(){
     const [email, setEmail] = useState<string> ("");
 	const [pass, setPass] = useState<string>("")
-	const btnRef = useRef<HTMLInputElement | null>(null)
 
 	const handleEmail = (e:React.ChangeEvent<HTMLInputElement>)=>{setEmail(e.target.value)}
 	const handlePass = (e:React.ChangeEvent<HTMLInputElement>)=>{setPass(e.target.value)}
@@ -29,7 +28,7 @@ export default function Login(){
 			<input type="email" onChange={handleEmail} />
 			<label>Password</label>
 			<input type="password" onChange={handlePass} />
-			<input type="submit" value="Submit" disabled ref={btnRef} onClick={handleSubmit} id="loginSubmit"/>
+			<input type="submit" value="Submit" disabled onClick={handleSubmit} id="loginSubmit"/>
 			</form>
         </>
     )
