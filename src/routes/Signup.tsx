@@ -9,6 +9,7 @@ const [email, setEmail] = useState<string>("");
 const [name, setName] = useState<string>("");
 const [password, setPassword] = useState<string>("");
 const [confirmPass, setConfirmPass] = useState<string>("");
+const [feedback, setFeedback] = useState<string>("");
 
 const handleEmail = (e:React.ChangeEvent<HTMLInputElement>):void=>{setEmail(e.target.value)}
 const handleName = (e:React.ChangeEvent<HTMLInputElement>):void=>{setName(e.target.value)}
@@ -16,6 +17,7 @@ const handlePass = (e:React.ChangeEvent<HTMLInputElement>):void=>{setPassword(e.
 const handleConfirmPass = (e:React.ChangeEvent<HTMLInputElement>):void=>{setConfirmPass(e.target.value)}
 
 useEffect(()=>{
+    setFeedback("")
     if(validator.isEmail(email) &&
        name.length >= NAMEMINLEN &&
        password.length >= PASSMINLEN &&
@@ -27,30 +29,6 @@ else{document.getElementById("signupSubmit")?.setAttribute('disabled', "true")}
 const handleSubmit = (e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault()
     sendSignup({email,name, password}, URL)
-}
-
-return(
-    <>
-        <form onSubmit={handleSubmit}>
-			<label>Email</label>
-			<input type="email" onChange={handleEmail} />
-            <label>User Name</label>
-			<input onChange={handleName} />
-			<label>Password</label>
-			<input type="password" onChange={handlePass} />
-            <label>Confirm Password</label>
-			<input type="password" onChange={handleConfirmPass} />
-			<input type='submit' value="Submit" id="signupSubmit"/>
-			</form>
-
-    </>
-)
-}
-
-interface Usersignup{
-    email: string,
-    name: string,
-    password: string
 }
 
 function sendSignup(user:Usersignup, url:string){
@@ -66,8 +44,49 @@ const requestOptions: RequestInit = {
   redirect: "follow"
 };
 
+setFeedback("Loading");
+let msg = "";
+
 fetch(`${url}/user`, requestOptions)
-  .then((response) => response.text())
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
+  .then((response) =>  {
+    if(response.status != 201){
+        return undefined
+    }
+    return response.json();
+  })
+  .then((result) => {if(!result){
+    msg = "Account creation failed"
+  }
+  else(    msg = "Account created!"
+  )
 }
+
+)
+  .catch((error) => console.error(error))
+  .finally(()=>setFeedback(msg))
+}
+
+return(
+    <>
+        <form onSubmit={handleSubmit}>
+			<label>Email</label>
+			<input type="email" onChange={handleEmail} />
+            <label>User Name</label>
+			<input onChange={handleName} />
+			<label>Password</label>
+			<input type="password" onChange={handlePass} />
+            <label>Confirm Password</label>
+			<input type="password" onChange={handleConfirmPass} />
+			<input type='submit' value="Submit" id="signupSubmit"/>
+			</form>
+        <h2>{feedback}</h2>
+    </>
+)
+}
+
+interface Usersignup{
+    email: string,
+    name: string,
+    password: string
+}
+
