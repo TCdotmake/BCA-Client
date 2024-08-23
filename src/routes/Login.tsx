@@ -51,7 +51,10 @@ export default function Login() {
       .then((result) => {
         if (!result) {
           msg = "Login failed";
-        } else msg = "Login!";
+        } else {
+          msg = "Login!";
+          localStorage.setItem("myToken", result.token);
+        }
         console.log(result);
       })
       .catch((error) => console.error(error))
