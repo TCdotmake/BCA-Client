@@ -1,35 +1,84 @@
-import React, { useState, useEffect } from "react"
-import validator from 'validator'
+import React, { useState, useEffect } from "react";
+import validator from "validator";
 
 const PASSMINLEN = 7;
+const URL = "http://localhost:3000";
 
+export default function Login() {
+  const [feedback, setFeedback] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-export default function Login(){
-    const [email, setEmail] = useState<string> ("");
-	const [pass, setPass] = useState<string>("")
+  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+  const handlePass = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    sendLogin({ email, password }, URL);
+  };
 
-	const handleEmail = (e:React.ChangeEvent<HTMLInputElement>)=>{setEmail(e.target.value)}
-	const handlePass = (e:React.ChangeEvent<HTMLInputElement>)=>{setPass(e.target.value)}
-    const handleSubmit = ()=>{console.log("submit clicked")}
+  interface UserLogin {
+    email: string;
+    password: string;
+  }
 
-    useEffect(()=>{
-        if(validator.isEmail(email) && pass.length >= PASSMINLEN){
-            document.getElementById("loginSubmit")?.removeAttribute("disabled");
+  function sendLogin(user: UserLogin, url: string) {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify(user);
+
+    const requestOptions: RequestInit = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    setFeedback("Loading");
+    let msg = "";
+
+    fetch(`${url}/user/login`, requestOptions)
+      .then((response) => {
+        if (response.status != 200) {
+          return undefined;
         }
-        else{
-            document.getElementById('loginSubmit')?.setAttribute('disabled', "true")
-        }
-    },[email, pass])
+        return response.json();
+      })
+      .then((result) => {
+        if (!result) {
+          msg = "Login failed";
+        } else msg = "Login!";
+        console.log(result);
+      })
+      .catch((error) => console.error(error))
+      .finally(() => setFeedback(msg));
+  }
 
-    return(
-        <>
-			<form>
-			<label>Email</label>
-			<input type="email" onChange={handleEmail} />
-			<label>Password</label>
-			<input type="password" onChange={handlePass} />
-			<input type="submit" value="Submit" disabled onClick={handleSubmit} id="loginSubmit"/>
-			</form>
-        </>
-    )
+  useEffect(() => {
+    setFeedback("");
+    if (validator.isEmail(email) && password.length >= PASSMINLEN) {
+      document.getElementById("loginSubmit")?.removeAttribute("disabled");
+    } else {
+      document.getElementById("loginSubmit")?.setAttribute("disabled", "true");
+    }
+  }, [email, password]);
+
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <label>Email</label>
+        <input type="email" onChange={handleEmail} />
+
+        <label>Password</label>
+        <input type="password" onChange={handlePass} />
+
+        <input type="submit" value="Submit" id="loginSubmit" />
+      </form>
+      <h2>{feedback}</h2>
+    </>
+  );
 }
