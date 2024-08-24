@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import validator from "validator";
 
 const PASSMINLEN = 7;
@@ -8,6 +9,8 @@ export default function Login() {
   const [feedback, setFeedback] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const navigate = useNavigate();
 
   const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -54,6 +57,7 @@ export default function Login() {
         } else {
           msg = "Login!";
           localStorage.setItem("myToken", result.token);
+          navigate("../dashboard");
         }
         console.log(result);
       })
