@@ -1,9 +1,17 @@
-import { Link, Outlet, Route, Routes } from "react-router-dom";
+import { Link, Outlet, Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import Login from "./Login";
 import Signup from "./Signup";
 import Dashboard from "./Dashboard";
+import { useEffect } from "react";
 export default function App() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (localStorage.getItem("myToken")) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
   return (
     <>
       <h1>Betrayal at the House on the Hill</h1>

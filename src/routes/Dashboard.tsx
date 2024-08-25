@@ -15,6 +15,7 @@ export default function Dashboard() {
     fetch(`${URL}/user/me`, requestOptions)
       .then((res) => {
         if (res.status != 200) {
+          localStorage.setItem("myToken", "");
           return undefined;
         }
         return res.json();
