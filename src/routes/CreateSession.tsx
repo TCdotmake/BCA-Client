@@ -1,8 +1,12 @@
 import { useState } from "react";
+import SessionType from "../interface/interface";
+import { URL } from "../dev/const";
 
-const URL = "http://localhost:3000";
+interface Prop {
+  setSessions: React.Dispatch<React.SetStateAction<SessionType[] | undefined>>;
+}
 
-export default function CreateSession() {
+export default function CreateSession(prop: Prop) {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
 
@@ -24,7 +28,6 @@ export default function CreateSession() {
       name: name || new Date().toDateString(),
       desc,
     };
-    console.log(data);
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", localStorage.getItem("myToken") || "");
@@ -37,13 +40,15 @@ export default function CreateSession() {
     };
     fetch(`${URL}/sessions`, requestOptions)
       .then((res) => {
-        if (res.status !== 201) {
+        if (res.status != 201) {
           return undefined;
         }
         return res.json();
       })
       .then((result) => {
-        console.log(result);
+        if (result) {
+          prop.setSessions(result);
+        }
       });
   };
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-const URL = "http://localhost:3000";
+import { URL } from "../dev/const";
 export default function Dashboard() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");

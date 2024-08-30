@@ -1,9 +1,9 @@
 import validator from "validator";
 import { useEffect, useState } from "react";
-
+import { URL } from "../dev/const";
 const PASSMINLEN = 7;
 const NAMEMINLEN = 3;
-const URL = "http://localhost:3000";
+
 export default function Signup() {
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");

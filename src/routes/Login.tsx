@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import validator from "validator";
-
+import { URL } from "../dev/const";
 const PASSMINLEN = 7;
-const URL = "http://localhost:3000";
 
 export default function Login() {
   const [feedback, setFeedback] = useState<string>("");
