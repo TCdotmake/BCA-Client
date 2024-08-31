@@ -48,6 +48,8 @@ export default function CreateSession(prop: Prop) {
       .then((result) => {
         if (result) {
           prop.setSessions(result);
+          setName("");
+          setDesc("");
         }
       });
   };
@@ -56,9 +58,19 @@ export default function CreateSession(prop: Prop) {
     <>
       <form onSubmit={handleSubmit}>
         <label htmlFor="inputSessionName">Session Name</label>
-        <input type="text" onChange={handleName} id="inputSessionName" />
+        <input
+          type="text"
+          onChange={handleName}
+          id="inputSessionName"
+          value={name}
+        />
         <label htmlFor="inputSessionDesc">Description</label>
-        <input type="text" onChange={handleDesc} id="inputSessionDesc" />
+        <input
+          type="text"
+          onChange={handleDesc}
+          id="inputSessionDesc"
+          value={desc}
+        />
         <input type="submit" value="Create Session" />
       </form>
     </>

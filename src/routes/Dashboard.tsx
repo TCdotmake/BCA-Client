@@ -57,7 +57,7 @@ export default function Dashboard() {
         {email && <p>{email}</p>}
         <button>Change Password</button>
       </div>
-      <Link to="../sessions">Sessions</Link>
+      <Link to="../sessions/list">Sessions</Link>
     </>
   );
 }

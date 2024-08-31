@@ -8,6 +8,8 @@ import { useEffect } from "react";
 import Sessions from "./Sessions";
 import CreateSession from "./CreateSession";
 import { URL } from "../dev/const";
+import InsideSession from "./InsideSession";
+import SessionList from "./SessionList";
 export default function App() {
   const navigate = useNavigate();
   useEffect(() => {
@@ -65,15 +67,24 @@ export default function App() {
             element={
               <Sessions
                 sessions={sessions || []}
-                setSessions={setSessions}
                 refreshSessions={refreshSessions}
               />
             }
           >
             <Route
+              path="list"
+              element={
+                <SessionList
+                  sessions={sessions || []}
+                  refreshSessions={refreshSessions}
+                />
+              }
+            />
+            <Route
               path="createsession"
               element={<CreateSession setSessions={setSessions} />}
             />
+            <Route path=":sessionID" element={<InsideSession />} />
           </Route>
           <Route path="*" element={<NoMatch />} />
         </Route>
