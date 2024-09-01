@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SessionType from "../interface/interface";
+import { SessionType } from "../interface/interface";
 import { URL } from "../dev/const";
 
 interface Prop {

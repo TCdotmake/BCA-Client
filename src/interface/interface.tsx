@@ -1,11 +1,14 @@
+import { EXPLORERS } from "../dev/const";
 interface SessionType {
   _id: string;
   active: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
   owner: string;
   name: string;
   desc: string;
 }
 
-export default SessionType;
+type ExplorerType = (typeof EXPLORERS)[number];
+
+export type { SessionType, ExplorerType };

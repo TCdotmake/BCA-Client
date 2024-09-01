@@ -1,4 +1,4 @@
-import SessionType from "../interface/interface";
+import { SessionType } from "../interface/interface";
 import { useEffect } from "react";
 import SessionPreview from "./components/SessionPreview";
 import { Link } from "react-router-dom";
