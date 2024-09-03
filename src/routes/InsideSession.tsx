@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { URL } from "../dev/const";
-import { SessionType } from "../interface/interface";
+import {
+  SessionType,
+  CharSheetType,
+  CharDefaultType,
+} from "../interface/interface";
 import { EXPLORERS } from "../dev/const";
 function getSession(
   sessionID: string | undefined,
@@ -35,7 +39,7 @@ interface Info {
 function LabeledPair(prop: Info) {
   return (
     <>
-      <div>
+      <div className="flex flex-row justify-between w-72">
         <p>{prop.label}</p>
         <p>{prop.info}</p>
       </div>
@@ -59,6 +63,46 @@ interface Prop {
 function AddPlayer(prop: Prop) {
   const [playerName, setPlayerName] = useState<string>("");
   const [explorer, setExplorer] = useState<string>("");
+  const [charSheets, setCharSheets] = useState<CharSheetType[]>();
+  const [charDefaults, setCharDefaults] = useState<CharDefaultType[]>();
+  useEffect(() => {
+    if (
+      !localStorage.getItem("charDefaults") ||
+      !localStorage.getItem("charSheets")
+    ) {
+      console.log("calling fetch");
+      const myHeaders = new Headers();
+      myHeaders.append("Authorization", localStorage.getItem("myToken") || "");
+      const requestOptions: RequestInit = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow",
+      };
+      fetch(`${URL}/player/charSheets`, requestOptions)
+        .then((res) => {
+          if (res.status !== 200) {
+            return undefined;
+          }
+          return res.json();
+        })
+        .then((result) => {
+          if (result) {
+            localStorage.setItem(
+              "charSheets",
+              JSON.stringify(result.charSheets)
+            );
+            localStorage.setItem(
+              "charDefaults",
+              JSON.stringify(result.charDefaults)
+            );
+          }
+        });
+    }
+    const sheetsStr = localStorage.getItem("charSheets");
+    const defaultsStr = localStorage.getItem("charDefaults");
+    setCharSheets(JSON.parse(sheetsStr));
+    setCharDefaults(JSON.parse(defaultsStr));
+  }, []);
 
   useEffect(() => {
     const addPlayer: HTMLElement | null =
@@ -124,7 +168,11 @@ function AddPlayer(prop: Prop) {
       >
         <option value=""></option>
         {EXPLORERS.map((explorer) => {
-          return <option value={explorer}>{explorer}</option>;
+          return (
+            <option value={explorer} key={`${explorer}-option`}>
+              {explorer}
+            </option>
+          );
         })}
       </select>
       <input type="submit" value="Add Player" id="submitAddPlayer" disabled />

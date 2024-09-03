@@ -9,7 +9,7 @@ export default function SessionPreview(prop: Prop) {
   const link = `../${session._id}`;
   return (
     <>
-      <li>
+      <li className="flex flex-row w-96 justify-between">
         <p>{session.name}</p>
         <p>{session.desc}</p>
         <p>{new Date(session.createdAt).toDateString()}</p>

@@ -9,6 +9,24 @@ interface SessionType {
   desc: string;
 }
 
+interface CharSheetType {
+  name: string;
+  might: number[];
+  speed: number[];
+  knowledge: number[];
+  sanity: number[];
+}
+
+interface CharDefaultType {
+  name: string;
+
+  speedLevel: number;
+  mightLevel: number;
+
+  knowledgeLevel: number;
+  sanityLevel: number;
+}
+
 type ExplorerType = (typeof EXPLORERS)[number];
 
-export type { SessionType, ExplorerType };
+export type { SessionType, ExplorerType, CharSheetType, CharDefaultType };
