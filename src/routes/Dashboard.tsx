@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { URL } from "../dev/const";
+import { UserData } from "../interface/interface";
 export default function Dashboard() {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -14,11 +15,6 @@ export default function Dashboard() {
       headers: myHeaders,
       redirect: "follow",
     };
-
-    interface UserData {
-      name: string;
-      email: string;
-    }
 
     let info: UserData;
 

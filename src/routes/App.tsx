@@ -7,50 +7,25 @@ import Dashboard from "./Dashboard";
 import { useEffect } from "react";
 import Sessions from "./Sessions";
 import CreateSession from "./CreateSession";
-import { URL } from "../dev/const";
 import InsideSession from "./InsideSession";
 import SessionList from "./SessionList";
+import {
+  CharSheetType,
+  CharDefaultType,
+  SessionType,
+} from "../interface/interface";
+import { getCharSheetAndDefault } from "../helpers/backend";
 export default function App() {
+  const [sessions, setSessions] = useState<SessionType[]>();
+  const [charSheets, setCharSheets] = useState<CharSheetType[]>();
+  const [charDefaults, setCharDefaults] = useState<CharDefaultType[]>();
   const navigate = useNavigate();
   useEffect(() => {
     if (localStorage.getItem("myToken")) {
       navigate("/dashboard");
     }
+    getCharSheetAndDefault(setCharSheets, setCharDefaults);
   }, []);
-
-  interface SessionType {
-    _id: string;
-    active: boolean;
-    createdAt: string;
-    updatedAt: string;
-    owner: string;
-    name: string;
-    desc: string;
-  }
-
-  const [sessions, setSessions] = useState<SessionType[]>();
-  function refreshSessions() {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-    myHeaders.append("Authorization", localStorage.getItem("myToken") || "");
-    const requestOptions: RequestInit = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-    fetch(`${URL}/sessions`, requestOptions)
-      .then((res) => {
-        if (res.status != 200) {
-          return undefined;
-        }
-        return res.json();
-      })
-      .then((result) => {
-        if (result) {
-          setSessions(result);
-        }
-      });
-  }
 
   return (
     <>
@@ -62,21 +37,13 @@ export default function App() {
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route
-            path="sessions"
-            element={
-              <Sessions
-                sessions={sessions || []}
-                refreshSessions={refreshSessions}
-              />
-            }
-          >
+          <Route path="sessions" element={<Sessions />}>
             <Route
               path="list"
               element={
                 <SessionList
                   sessions={sessions || []}
-                  refreshSessions={refreshSessions}
+                  setSessions={setSessions}
                 />
               }
             />

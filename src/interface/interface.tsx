@@ -1,4 +1,17 @@
 import { EXPLORERS } from "../dev/const";
+
+interface UserData {
+  name: string;
+  email: string;
+}
+
+interface SessionMaker {
+  name: string;
+  desc: string;
+  setName: (value: React.SetStateAction<string>) => void;
+  setDesc: (value: React.SetStateAction<string>) => void;
+  setSessions: React.Dispatch<React.SetStateAction<SessionType[] | undefined>>;
+}
 interface SessionType {
   _id: string;
   active: boolean;
@@ -29,4 +42,11 @@ interface CharDefaultType {
 
 type ExplorerType = (typeof EXPLORERS)[number];
 
-export type { SessionType, ExplorerType, CharSheetType, CharDefaultType };
+export type {
+  SessionType,
+  ExplorerType,
+  CharSheetType,
+  CharDefaultType,
+  SessionMaker,
+  UserData,
+};
