@@ -1,5 +1,16 @@
 import { EXPLORERS } from "../dev/const";
 
+interface PlayerType {
+  name: string;
+  _id: string;
+  status: string;
+  explorer: ExplorerType;
+  mightLevel: number;
+  speedLevel: number;
+  sanityLevel: number;
+  knowledgeLevel: number;
+}
+
 interface UserData {
   name: string;
   email: string;
@@ -20,6 +31,7 @@ interface SessionType {
   owner: string;
   name: string;
   desc: string;
+  players: PlayerType[];
 }
 
 interface CharSheetType {
@@ -30,12 +42,10 @@ interface CharSheetType {
   sanity: number[];
 }
 
-interface CharDefaultType {
+interface CharType {
   name: string;
-
   speedLevel: number;
   mightLevel: number;
-
   knowledgeLevel: number;
   sanityLevel: number;
 }
@@ -46,7 +56,7 @@ export type {
   SessionType,
   ExplorerType,
   CharSheetType,
-  CharDefaultType,
+  CharType,
   SessionMaker,
   UserData,
 };

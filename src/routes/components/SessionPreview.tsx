@@ -13,6 +13,7 @@ export default function SessionPreview(prop: Prop) {
         <p>{session.name}</p>
         <p>{session.desc}</p>
         <p>{new Date(session.createdAt).toDateString()}</p>
+        <p>Players: {session.players.length}</p>
         <Link to={link}>Enter</Link>
       </li>
     </>

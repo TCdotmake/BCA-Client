@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { URL } from "../dev/const";
-import { SessionType } from "../interface/interface";
+import { SessionType, CharType } from "../interface/interface";
 import { EXPLORERS } from "../dev/const";
 import { getSession } from "../helpers/backend";
+import CharCard from "./CharCard";
 
 interface Info {
   label: string;
@@ -36,6 +37,10 @@ interface Prop {
 function AddPlayer(prop: Prop) {
   const [playerName, setPlayerName] = useState<string>("");
   const [explorer, setExplorer] = useState<string>("");
+  const [char, setChar] = useState<CharType>();
+  const charDefaults: CharType[] = JSON.parse(
+    localStorage.getItem("charDefaults")
+  );
 
   useEffect(() => {
     const addPlayer: HTMLElement | null =
@@ -53,6 +58,11 @@ function AddPlayer(prop: Prop) {
 
   const handleChangeExplorer = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setExplorer(e.target.value);
+    charDefaults.map((n) => {
+      if (n.name === e.target.value) {
+        setChar(n);
+      }
+    });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -85,31 +95,34 @@ function AddPlayer(prop: Prop) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="PlayerNameInput">Player Name</label>
-      <input
-        type="text"
-        id="PlayerNameInput"
-        value={playerName}
-        onChange={handleChangeName}
-      />
-      <label htmlFor="selectExplorer">Explorer</label>
-      <select
-        id="selectExplorer"
-        value={explorer}
-        onChange={handleChangeExplorer}
-      >
-        <option value=""></option>
-        {EXPLORERS.map((explorer) => {
-          return (
-            <option value={explorer} key={`${explorer}-option`}>
-              {explorer}
-            </option>
-          );
-        })}
-      </select>
-      <input type="submit" value="Add Player" id="submitAddPlayer" disabled />
-    </form>
+    <>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="PlayerNameInput">Player Name</label>
+        <input
+          type="text"
+          id="PlayerNameInput"
+          value={playerName}
+          onChange={handleChangeName}
+        />
+        <label htmlFor="selectExplorer">Explorer</label>
+        <select
+          id="selectExplorer"
+          value={explorer}
+          onChange={handleChangeExplorer}
+        >
+          <option value=""></option>
+          {EXPLORERS.map((explorer) => {
+            return (
+              <option value={explorer} key={`${explorer}-option`}>
+                {explorer}
+              </option>
+            );
+          })}
+        </select>
+        <input type="submit" value="Add Player" id="submitAddPlayer" disabled />
+      </form>
+      {char && <CharCard char={char} />}
+    </>
   );
 }
 
@@ -135,7 +148,10 @@ export default function InsideSession() {
   return (
     <>
       <LabeledPair label="Session Name: " info={session?.name} />
-      <LabeledPair label="Description: " info={session?.desc} />
+      {session?.desc && (
+        <LabeledPair label="Description: " info={session?.desc} />
+      )}
+
       <LabeledPair label="Created: " info={created} />
       <LabeledPair label="Last Update: " info={updated} />
       <LabeledPair

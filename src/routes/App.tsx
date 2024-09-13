@@ -9,16 +9,13 @@ import Sessions from "./Sessions";
 import CreateSession from "./CreateSession";
 import InsideSession from "./InsideSession";
 import SessionList from "./SessionList";
-import {
-  CharSheetType,
-  CharDefaultType,
-  SessionType,
-} from "../interface/interface";
+import { CharSheetType, CharType, SessionType } from "../interface/interface";
 import { getCharSheetAndDefault } from "../helpers/backend";
+
 export default function App() {
   const [sessions, setSessions] = useState<SessionType[]>();
   const [charSheets, setCharSheets] = useState<CharSheetType[]>();
-  const [charDefaults, setCharDefaults] = useState<CharDefaultType[]>();
+  const [charDefaults, setCharDefaults] = useState<CharType[]>();
   const navigate = useNavigate();
   useEffect(() => {
     if (localStorage.getItem("myToken")) {
