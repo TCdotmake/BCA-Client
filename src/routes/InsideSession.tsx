@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { URL } from "../dev/const";
-import { SessionType, CharType } from "../interface/interface";
+import { SessionType, CharType, PlayerType } from "../interface/interface";
 import { EXPLORERS } from "../dev/const";
 import { getSession } from "../helpers/backend";
 import CharCard from "./CharCard";
@@ -32,6 +32,7 @@ function convertDate(date) {
 
 interface Prop {
   sessionID: string;
+  refreshSession(): void;
 }
 
 function AddPlayer(prop: Prop) {
@@ -91,6 +92,7 @@ function AddPlayer(prop: Prop) {
       })
       .then((result) => {
         console.log(result);
+        prop.refreshSession();
       });
   };
 
@@ -126,14 +128,67 @@ function AddPlayer(prop: Prop) {
   );
 }
 
+interface DisplayPlayersProp {
+  players: PlayerType[] | undefined;
+}
+function DisplayPlayers(prop: DisplayPlayersProp) {
+  const { players } = prop;
+  return (
+    <>
+      <h4>Players</h4>
+      {players && (
+        <ul>
+          {players.map((player) => {
+            return (
+              <li
+                key={player._id}
+              >{`"${player.explorer}" - ${player.name}`}</li>
+            );
+          })}
+        </ul>
+      )}
+    </>
+  );
+}
+
+interface SessionInfoProp {
+  session: SessionType | undefined;
+  created: string;
+  updated: string;
+}
+function SessionInfo(prop: SessionInfoProp) {
+  const { session, created, updated } = prop;
+  return (
+    <>
+      <div>
+        <LabeledPair label="Session Name: " info={session?.name} />
+        {session?.desc && (
+          <LabeledPair label="Description: " info={session?.desc} />
+        )}
+        <LabeledPair label="Created: " info={created} />
+        <LabeledPair label="Last Update: " info={updated} />
+        <LabeledPair
+          label="Game in Progress: "
+          info={session?.active ? "Yes" : "No"}
+        />
+      </div>
+    </>
+  );
+}
+
 export default function InsideSession() {
   const [session, setSession] = useState<SessionType>();
   const [created, setCreated] = useState<string>("");
   const [updated, setUpdated] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
   const { sessionID } = useParams();
-  useEffect(() => {
+
+  function refreshSession() {
     getSession(sessionID, setSession);
+  }
+
+  useEffect(() => {
+    refreshSession();
   }, []);
 
   useEffect(() => {
@@ -147,19 +202,12 @@ export default function InsideSession() {
 
   return (
     <>
-      <LabeledPair label="Session Name: " info={session?.name} />
-      {session?.desc && (
-        <LabeledPair label="Description: " info={session?.desc} />
-      )}
-
-      <LabeledPair label="Created: " info={created} />
-      <LabeledPair label="Last Update: " info={updated} />
-      <LabeledPair
-        label="Game in Progress: "
-        info={session?.active ? "Yes" : "No"}
-      />
+      <SessionInfo session={session} created={created} updated={updated} />
+      <DisplayPlayers players={session?.players} />
       <button onClick={toggleModal}>Add Player</button>
-      {openModal && <AddPlayer sessionID={session?._id} />}
+      {openModal && (
+        <AddPlayer sessionID={session?._id} refreshSession={refreshSession} />
+      )}
     </>
   );
 }

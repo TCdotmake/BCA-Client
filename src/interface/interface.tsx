@@ -59,4 +59,5 @@ export type {
   CharType,
   SessionMaker,
   UserData,
+  PlayerType,
 };

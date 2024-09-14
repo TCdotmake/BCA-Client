@@ -24,7 +24,9 @@ function StatDisplay(StatProp: StatProp) {
                   </li>
                 );
               }
-              return <li>{value}</li>;
+              return (
+                <li key={`${StatProp.type}-level-${index}-value`}>{value}</li>
+              );
             })}
         </ul>
       </li>
@@ -51,22 +53,23 @@ export default function CharCard(prop: Prop) {
 
   return (
     <>
-      <div>
-        <h3>{prop.char.name}</h3>
-
-        <ul>
-          {ATTRIBUTE_TYPE.map((type) => {
-            return (
-              <StatDisplay
-                key={`${type}-stat-display`}
-                type={type}
-                values={charSheet[`${type}`]}
-                level={prop.char[`${type}Level`]}
-              />
-            );
-          })}
-        </ul>
-      </div>
+      {charSheet && (
+        <div>
+          <h3>{prop.char.name}</h3>
+          <ul>
+            {ATTRIBUTE_TYPE.map((type) => {
+              return (
+                <StatDisplay
+                  key={`${type}-stat-display`}
+                  type={type}
+                  values={charSheet[`${type}`]}
+                  level={prop.char[`${type}Level`]}
+                />
+              );
+            })}
+          </ul>
+        </div>
+      )}
     </>
   );
 }
