@@ -33,15 +33,22 @@ function convertDate(date) {
 interface Prop {
   sessionID: string;
   refreshSession(): void;
+  players: PlayerType[];
 }
 
 function AddPlayer(prop: Prop) {
   const [playerName, setPlayerName] = useState<string>("");
   const [explorer, setExplorer] = useState<string>("");
   const [char, setChar] = useState<CharType>();
+  const [feedback, setFeedback] = useState<string>("");
   const charDefaults: CharType[] = JSON.parse(
     localStorage.getItem("charDefaults")
   );
+
+  const selectedExplorers: string[] = [];
+  prop.players.forEach((player) => {
+    selectedExplorers.push(player.explorer);
+  });
 
   useEffect(() => {
     const addPlayer: HTMLElement | null =
@@ -55,10 +62,12 @@ function AddPlayer(prop: Prop) {
 
   const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPlayerName(e.target.value);
+    setFeedback("");
   };
 
   const handleChangeExplorer = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setExplorer(e.target.value);
+    setFeedback("");
     charDefaults.map((n) => {
       if (n.name === e.target.value) {
         setChar(n);
@@ -85,14 +94,14 @@ function AddPlayer(prop: Prop) {
 
     fetch(`${URL}/player`, requestOptions)
       .then((res) => {
-        if (res.status !== 201) {
-          return undefined;
-        }
         return res.json();
       })
       .then((result) => {
         console.log(result);
         prop.refreshSession();
+        setPlayerName("");
+        setExplorer("");
+        setChar(undefined);
       });
   };
 
@@ -114,15 +123,18 @@ function AddPlayer(prop: Prop) {
         >
           <option value=""></option>
           {EXPLORERS.map((explorer) => {
-            return (
-              <option value={explorer} key={`${explorer}-option`}>
-                {explorer}
-              </option>
-            );
+            if (!selectedExplorers.includes(explorer)) {
+              return (
+                <option value={explorer} key={`${explorer}-option`}>
+                  {explorer}
+                </option>
+              );
+            }
           })}
         </select>
         <input type="submit" value="Add Player" id="submitAddPlayer" disabled />
       </form>
+      <p>{feedback}</p>
       {char && <CharCard char={char} />}
     </>
   );
@@ -135,7 +147,6 @@ function DisplayPlayers(prop: DisplayPlayersProp) {
   const { players } = prop;
   return (
     <>
-      <h4>Players</h4>
       {players && (
         <ul>
           {players.map((player) => {
@@ -176,15 +187,99 @@ function SessionInfo(prop: SessionInfoProp) {
   );
 }
 
+interface SetOrderProp {
+  players: PlayerType[] | undefined;
+}
+function SetOrder(prop: SetOrderProp) {
+  const [order, setOrder] = useState<PlayerType[] | undefined>([]);
+
+  const handlePlayerClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const player = prop.players.find((n) => n._id === e.target.dataset.id);
+    if (player) {
+      let arr: PlayerType[] = [];
+      if (order) {
+        arr = [...order];
+        if (!order?.includes(player)) {
+          arr = [...order, player];
+        }
+      } else {
+        arr = [player];
+      }
+      setOrder(arr);
+    }
+  };
+
+  const handleReset = () => {
+    setOrder([]);
+  };
+
+  const handleSave = () => {
+    console.log("save");
+  };
+
+  useEffect(() => {
+    if (prop.players?.length === order?.length) {
+      document.getElementById("save-order")?.removeAttribute("disabled");
+    } else {
+      document.getElementById("save-order")?.setAttribute("disabled", "true");
+    }
+  }, [prop.players, order]);
+
+  return (
+    <>
+      <h2>Set Order</h2>
+      <button onClick={handleReset}>Reset</button>
+      <button id="save-order" onClick={handleSave}>
+        Save
+      </button>
+      <div>
+        <div>
+          <ul className="flex flex-col">
+            {prop.players &&
+              prop.players.map((player) => {
+                if (!order?.includes(player))
+                  return (
+                    <button
+                      onClick={handlePlayerClick}
+                      data-id={player._id}
+                      key={`${player._id}-setOrder`}
+                    >{`"${player.explorer}" - ${player.name}`}</button>
+                  );
+              })}
+          </ul>
+        </div>
+        <div>
+          <ol className="list-decimal">
+            {order &&
+              order.map((player) => {
+                return (
+                  <li
+                    key={`${player._id}-orderedList`}
+                  >{`"${player.explorer}" - ${player.name}`}</li>
+                );
+              })}
+          </ol>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export default function InsideSession() {
   const [session, setSession] = useState<SessionType>();
   const [created, setCreated] = useState<string>("");
   const [updated, setUpdated] = useState<string>("");
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [addModal, setAddModal] = useState<boolean>(false);
+  const [orderModal, setOrderModal] = useState<boolean>(false);
   const { sessionID } = useParams();
 
   function refreshSession() {
     getSession(sessionID, setSession);
+  }
+
+  function closeAllModal() {
+    setAddModal(false);
+    setOrderModal(false);
   }
 
   useEffect(() => {
@@ -196,18 +291,35 @@ export default function InsideSession() {
     setUpdated(convertDate(session?.updatedAt));
   }, [session]);
 
-  const toggleModal = () => {
-    setOpenModal(!openModal);
+  const toggleAddModal = () => {
+    const current = addModal;
+    closeAllModal();
+    setAddModal(!current);
+  };
+
+  const toggleOrderModal = () => {
+    const current = orderModal;
+    closeAllModal();
+    setOrderModal(!current);
   };
 
   return (
     <>
-      <SessionInfo session={session} created={created} updated={updated} />
-      <DisplayPlayers players={session?.players} />
-      <button onClick={toggleModal}>Add Player</button>
-      {openModal && (
-        <AddPlayer sessionID={session?._id} refreshSession={refreshSession} />
+      <div className="flex flex-row justify-evenly">
+        <SessionInfo session={session} created={created} updated={updated} />
+        <DisplayPlayers players={session?.players} />
+      </div>
+
+      <button onClick={toggleAddModal}>Add Player</button>
+      <button onClick={toggleOrderModal}>Set Order</button>
+      {addModal && (
+        <AddPlayer
+          sessionID={session?._id}
+          refreshSession={refreshSession}
+          players={session?.players}
+        />
       )}
+      {orderModal && <SetOrder players={session?.players} />}
     </>
   );
 }
