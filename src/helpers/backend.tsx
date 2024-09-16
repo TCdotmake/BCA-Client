@@ -5,6 +5,7 @@ import {
   CharDefaultType,
   SessionMaker,
   SessionType,
+  TurnType,
 } from "../interface/interface";
 
 const getCharSheetAndDefault = (
@@ -130,4 +131,33 @@ function getSession(
     });
 }
 
-export { getCharSheetAndDefault, refreshSessions, createSession, getSession };
+function setTurn(turnArr: TurnType[]) {
+  const myHeaders = new Headers();
+  myHeaders.append("Content-Type", "application/json");
+  myHeaders.append("Authorization", localStorage.getItem("myToken") || "");
+  const raw = JSON.stringify(turnArr);
+  const requestOptions: RequestInit = {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+  fetch(`${URL}/player/set-turn`, requestOptions)
+    .then((res) => {
+      return res.json();
+    })
+    .then((result) => {
+      console.log(result);
+    })
+    .catch((e) => {
+      console.log(e.message);
+    });
+}
+
+export {
+  getCharSheetAndDefault,
+  refreshSessions,
+  createSession,
+  getSession,
+  setTurn,
+};

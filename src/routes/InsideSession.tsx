@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { URL } from "../dev/const";
-import { SessionType, CharType, PlayerType } from "../interface/interface";
+import {
+  SessionType,
+  CharType,
+  PlayerType,
+  TurnType,
+} from "../interface/interface";
 import { EXPLORERS } from "../dev/const";
-import { getSession } from "../helpers/backend";
+import { getSession, setTurn } from "../helpers/backend";
 import CharCard from "./CharCard";
 
 interface Info {
@@ -214,7 +219,13 @@ function SetOrder(prop: SetOrderProp) {
   };
 
   const handleSave = () => {
-    console.log("save");
+    const copy: TurnType[] = [];
+    order &&
+      order.map((player, index) => {
+        copy.push({ _id: player._id, turn: index });
+      });
+    console.log(copy);
+    setTurn(copy);
   };
 
   useEffect(() => {

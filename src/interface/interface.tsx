@@ -9,6 +9,7 @@ interface PlayerType {
   speedLevel: number;
   sanityLevel: number;
   knowledgeLevel: number;
+  turn: number;
 }
 
 interface UserData {
@@ -52,6 +53,10 @@ interface CharType {
 
 type ExplorerType = (typeof EXPLORERS)[number];
 
+interface TurnType {
+  _id: string;
+  turn: number;
+}
 export type {
   SessionType,
   ExplorerType,
@@ -60,4 +65,5 @@ export type {
   SessionMaker,
   UserData,
   PlayerType,
+  TurnType,
 };
