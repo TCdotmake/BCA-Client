@@ -8,7 +8,7 @@ import {
   TurnType,
 } from "../interface/interface";
 import { EXPLORERS } from "../dev/const";
-import { getSession, setTurn } from "../helpers/backend";
+import { getSession, patchSession, setTurn } from "../helpers/backend";
 import CharCard from "./CharCard";
 
 interface Info {
@@ -187,6 +187,7 @@ function SessionInfo(prop: SessionInfoProp) {
           label="Game in Progress: "
           info={session?.active ? "Yes" : "No"}
         />
+        <LabeledPair label="Turn: " info={session?.turn.toString()} />
       </div>
     </>
   );
@@ -314,6 +315,10 @@ export default function InsideSession() {
     setOrderModal(!current);
   };
 
+  const handleAdvanceTurn = () => {
+    patchSession(session?._id, { turn: session?.turn + 1 }, setSession);
+  };
+
   return (
     <>
       <div className="flex flex-row justify-evenly">
@@ -323,6 +328,7 @@ export default function InsideSession() {
 
       <button onClick={toggleAddModal}>Add Player</button>
       <button onClick={toggleOrderModal}>Set Order</button>
+      <button onClick={handleAdvanceTurn}>End Turn</button>
       {addModal && (
         <AddPlayer
           sessionID={session?._id}

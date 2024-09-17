@@ -33,6 +33,7 @@ interface SessionType {
   name: string;
   desc: string;
   players: PlayerType[];
+  turn: number;
 }
 
 interface CharSheetType {

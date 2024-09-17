@@ -131,6 +131,28 @@ function getSession(
     });
 }
 
+function patchSession(
+  sessionID: string,
+  updates,
+  setSession: (value: React.SetStateAction<SessionType[] | undefined>) => void
+) {
+  const myHeaders = new Headers();
+  myHeaders.append("Authorization", localStorage.getItem("myToken") || "");
+  myHeaders.append("Content-Type", "application/json");
+  const raw = JSON.stringify(updates);
+  const requestOptions: RequestInit = {
+    method: "PATCH",
+    headers: myHeaders,
+    body: raw,
+    redirect: "follow",
+  };
+  fetch(`${URL}/sessions/${sessionID}`, requestOptions)
+    .then((res) => res.json())
+    .then((result) => {
+      setSession(result);
+    });
+}
+
 function setTurn(turnArr: TurnType[]) {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -160,4 +182,5 @@ export {
   createSession,
   getSession,
   setTurn,
+  patchSession,
 };
