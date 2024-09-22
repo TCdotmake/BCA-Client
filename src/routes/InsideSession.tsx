@@ -147,9 +147,10 @@ function AddPlayer(prop: Prop) {
 
 interface DisplayPlayersProp {
   players: PlayerType[] | undefined;
+  turn: number | undefined;
 }
 function DisplayPlayers(prop: DisplayPlayersProp) {
-  const { players } = prop;
+  const { players, turn } = prop;
   return (
     <>
       {players && (
@@ -158,6 +159,9 @@ function DisplayPlayers(prop: DisplayPlayersProp) {
             return (
               <li
                 key={player._id}
+                className={
+                  turn % players.length === player.turn ? "text-rose-500" : ""
+                }
               >{`"${player.explorer}" - ${player.name}`}</li>
             );
           })}
@@ -187,7 +191,7 @@ function SessionInfo(prop: SessionInfoProp) {
           label="Game in Progress: "
           info={session?.active ? "Yes" : "No"}
         />
-        <LabeledPair label="Turn: " info={session?.turn.toString()} />
+        <LabeledPair label="Turn: " info={(session?.turn + 1).toString()} />
       </div>
     </>
   );
@@ -323,7 +327,7 @@ export default function InsideSession() {
     <>
       <div className="flex flex-row justify-evenly">
         <SessionInfo session={session} created={created} updated={updated} />
-        <DisplayPlayers players={session?.players} />
+        <DisplayPlayers players={session?.players} turn={session?.turn} />
       </div>
 
       <button onClick={toggleAddModal}>Add Player</button>
