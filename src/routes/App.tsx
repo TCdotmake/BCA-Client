@@ -11,6 +11,8 @@ import InsideSession from "./InsideSession";
 import SessionList from "./SessionList";
 import { CharSheetType, CharType, SessionType } from "../interface/interface";
 import { getCharSheetAndDefault } from "../helpers/backend";
+import BgImg from "./BgImg";
+import LandingPage from "./LandingPage";
 
 export default function App() {
   const [sessions, setSessions] = useState<SessionType[]>();
@@ -26,39 +28,54 @@ export default function App() {
 
   return (
     <>
-      <div
-        className="bg-fixed bg-cover bg-no-repeat w-screen min-h-screen contrast-50 absolute z-0"
-        style={{ backgroundImage: "url(src/img/BG-1080.png)" }}
-      ></div>
-      <div className="z-10 absolute w-5/6 left-1/2 -translate-x-1/2 top-24 md:top-1/3">
-        <h1>Betrayal at the House on the Hill</h1>
-        <hr />
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="login" element={<Login />} />
-            <Route path="signup" element={<Signup />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="sessions" element={<Sessions />}>
-              <Route
-                path="list"
-                element={
-                  <SessionList
-                    sessions={sessions || []}
-                    setSessions={setSessions}
-                  />
-                }
-              />
-              <Route
-                path="createsession"
-                element={<CreateSession setSessions={setSessions} />}
-              />
-              <Route path=":sessionID" element={<InsideSession />} />
-            </Route>
-            <Route path="*" element={<NoMatch />} />
+      <BgImg backgroundImage="url(src/img/BG-1080.png)" />
+
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route
+            index
+            element={
+              <LandingPage>
+                <Home />
+              </LandingPage>
+            }
+          />
+          <Route
+            path="login"
+            element={
+              <LandingPage>
+                <Login />
+              </LandingPage>
+            }
+          />
+          <Route
+            path="signup"
+            element={
+              <LandingPage>
+                <Signup />
+              </LandingPage>
+            }
+          />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="sessions" element={<Sessions />}>
+            <Route
+              path="list"
+              element={
+                <SessionList
+                  sessions={sessions || []}
+                  setSessions={setSessions}
+                />
+              }
+            />
+            <Route
+              path="createsession"
+              element={<CreateSession setSessions={setSessions} />}
+            />
+            <Route path=":sessionID" element={<InsideSession />} />
           </Route>
-        </Routes>
-      </div>
+          <Route path="*" element={<NoMatch />} />
+        </Route>
+      </Routes>
     </>
   );
 }
@@ -66,7 +83,9 @@ export default function App() {
 function Layout() {
   return (
     <>
-      <Outlet />
+      <div className="z-10 absolute w-5/6 min-h-screen left-1/2 -translate-x-1/2 bg-slate-900/80">
+        <Outlet />
+      </div>
     </>
   );
 }
